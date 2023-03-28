@@ -1,16 +1,8 @@
-<!--<resources>-->
-<!--    <string name="app_name">TipCalculator</string>-->
-<!--    <string name="tip_calculator_heading">Calculate Tip</string>-->
-<!--    <string name="service_cost">Bill Amount</string>-->
-<!--    <string name="tip_amount">Tip Amount</string>-->
-<!--</resources>-->
-
 <resources>
     <string name="app_name">Tip Calculator</string>
     <string name="tip_calculator_heading">Calculate Tip</string>
     <string name="service_cost">Cost of Service</string>
     <string name="bill_amount">Bill Amount %s</string>
-<!--    <string name="tip_amount">Tip Amount %d %s</string>-->
     <string name="tip_amount">Tip Amount %s</string>
     <string name="total">Total %s</string>
 </resources>

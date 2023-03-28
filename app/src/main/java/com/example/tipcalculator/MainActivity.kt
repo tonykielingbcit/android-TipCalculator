@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -34,8 +35,6 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier
                         .fillMaxSize()
-//                        .background(color = Color.Red),
-//                    color = MaterialTheme.colors.background
                 ) {
                     Column(modifier = Modifier.background(color = Color.Gray)) {
                         TipCalculatorScreen()
@@ -49,10 +48,11 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun TipCalculatorScreen() {
     var serviceCostAmountInput by remember { mutableStateOf("") }
-//    var tipPercentage by remember { mutableStateOf("") }
-    val amount = serviceCostAmountInput.toDoubleOrNull() ?: 0.0
-    val tip = calculateTip(amount)
-    val randomBillAmount = 0;
+    var tipPercentage by remember { mutableStateOf("") }
+    var amount = serviceCostAmountInput.toDoubleOrNull() ?: 0.0
+    var tipDefault = tipPercentage.toDoubleOrNull() ?: 15.0
+    var tipAmount = calculateTip(amount, tipDefault)
+    var tipToDisplay = NumberFormat.getCurrencyInstance().format(tipAmount)
 
     Column(
         modifier = Modifier
@@ -68,7 +68,11 @@ fun TipCalculatorScreen() {
         Spacer(Modifier.height(16.dp))
         Button(
             elevation = ButtonDefaults.elevation(defaultElevation = 20.dp),
-            onClick = { serviceCostAmountInput = (10..300).random().toString() }
+            modifier = Modifier
+                .fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue),
+            shape = RoundedCornerShape(size = 5.dp),
+            onClick = { serviceCostAmountInput = (8..321).random().toString() }
 
         ) {
             Text(text = "Generate a random Bill Amount")
@@ -78,19 +82,15 @@ fun TipCalculatorScreen() {
             value = serviceCostAmountInput,
             onValueChange = { serviceCostAmountInput = it }
         )
-//        Spacer(Modifier.height(24.dp))
-//        Text(
-//            text = stringResource(R.string.tip_amount, tip),
-//            modifier = Modifier.align(Alignment.CenterHorizontally),
-//            fontSize = 20.sp,
-//            fontWeight = FontWeight.Bold
-//        )
 
 //  buttons area
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(30.dp))
         Row {
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { tipPercentage = "10" },
+                modifier = Modifier
+                    .height(70.dp)
+                    .width(110.dp),
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
 
             ) {
@@ -98,7 +98,10 @@ fun TipCalculatorScreen() {
             }
             Spacer(Modifier.width(8.dp))
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { tipPercentage = "15" },
+                modifier = Modifier
+                    .height(70.dp)
+                    .width(110.dp),
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
 
             ) {
@@ -107,7 +110,10 @@ fun TipCalculatorScreen() {
         }
         Row {
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { tipPercentage = "18" },
+                modifier = Modifier
+                    .height(70.dp)
+                    .width(110.dp),
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
 
             ) {
@@ -115,7 +121,10 @@ fun TipCalculatorScreen() {
             }
             Spacer(Modifier.width(8.dp))
             Button(
-                onClick = {},
+                onClick = { tipPercentage = "20" },
+                modifier = Modifier
+                    .height(70.dp)
+                    .width(110.dp),
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent)
             ) {
                 Text(text = "20%")
@@ -126,27 +135,20 @@ fun TipCalculatorScreen() {
 //  total area
         Spacer(Modifier.height(24.dp))
         Text(
-            text = stringResource(R.string.bill_amount, serviceCostAmountInput),
-//            text = stringResource(R.string.bill_amount, String.format("%.2f", "10")),
-//            text = stringResource(R.string.bill_amount, NumberFormat.getCurrencyInstance().format(serviceCostAmountInput)),
-//            text = fillBillAmount(serviceCostAmountInput),
-//            text = NumberFormat.getCurrencyInstance().format(serviceCostAmountInput),
+            text = stringResource(R.string.bill_amount, NumberFormat.getCurrencyInstance().format(amount)),
             modifier = Modifier.align(Alignment.End),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
         Text(
-//            text = stringResource(R.string.tip_amount, 10.0, tip),
-            text = stringResource(R.string.tip_amount, tip),
+            text = stringResource(R.string.tip_amount, tipToDisplay),
             modifier = Modifier.align(Alignment.End),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
         Divider(modifier = Modifier.height(4.dp))
         Text(
-//            text = stringResource(R.string.total, tip, serviceCostAmountInput), need to reata a function to add values
-//            text = stringResource(R.string.total, sumUp(tip, serviceCostAmountInput),
-            text = stringResource(R.string.total, tip, serviceCostAmountInput),
+            text = stringResource(R.string.total, sumUp(tipAmount, amount)),
             modifier = Modifier.align(Alignment.End),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
@@ -155,24 +157,18 @@ fun TipCalculatorScreen() {
     }
 }
 
-//private fun fillBillAmount(v: String): String {
-//    println("received: " + v)
-//    return NumberFormat.getCurrencyInstance().format(v)
-//}
-
-//private fun sumUp(v1: String, v2: String ): String {
-//    println("received: " + v)
-//    val total =
-//    return String.format("%.2f", v);
-//}
+private fun sumUp(tipAmount: Double, amount: Double ): String {
+    val total = tipAmount + amount
+    return NumberFormat.getCurrencyInstance().format(total)
+}
 
 private fun calculateTip(
     amount: Double,
-    tipPercent: Double = 15.0
-): String {
-    val tip = tipPercent / 100 * amount
-    return NumberFormat.getCurrencyInstance().format(tip)
+    tipPercent: Double
+): Double {
+    return tipPercent / 100 * amount
 }
+
 
 @Composable
 fun EditServiceCostField(
@@ -185,6 +181,7 @@ fun EditServiceCostField(
         label = { Text(stringResource(R.string.service_cost)) },
         modifier = Modifier.fillMaxWidth(),
         singleLine = true,
+        colors = TextFieldDefaults.textFieldColors(textColor = Color.White),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
     )
 }
